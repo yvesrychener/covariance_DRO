@@ -40,7 +40,7 @@ def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     # bisection interval 
     p = sigma_hat.shape[0]
     D = 4*np.exp(-(2*epsilon-np.log(w).sum())/p)
-    interval = [0, (D**2*w.max())/(8*w.max()-2*D)]
+    interval = [0, (D**2*w.min())/(8*w.min()-2*D)]
     
     # find the optimal gamma
     gamma_star = optimizers.bisection(f_prime, interval, tol=tol, maxit=maxit)
