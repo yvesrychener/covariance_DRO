@@ -39,8 +39,7 @@ def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
                    (2*sigma(gamma)*sigma_p(gamma)+np.log(sigma(gamma))+gamma*(sigma_p(gamma)/sigma(gamma))).sum()
     # bisection interval 
     p = sigma_hat.shape[0]
-    D = 4*np.exp(-(2*epsilon-np.log(w).sum())/p)
-    interval = [0, (D**2*w.min())/(8*w.min()-2*D)]
+    interval = [0, (2*w.max()**2*np.exp(-4*epsilon/p))/(1-np.exp(-2*epsilon/p))]
     
     # find the optimal gamma
     gamma_star = optimizers.bisection(f_prime, interval, tol=tol, maxit=maxit)
@@ -90,8 +89,8 @@ def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
     }
     
     # sanity check for inputs
-    if not epsilon>=0:
-        raise ValueError('negative ball radius')
+    if not epsilon>0:
+        raise ValueError('ball radius must be >0')
     if not np.all(np.linalg.eigvals(sigma_hat) > 0): 
         raise ValueError('non-positive-semidefinite covariance matrix')
     if not method in list(function_dict.keys()):
