@@ -1,6 +1,5 @@
 function [sigma_star] = KL_estimator(sigma_hat,epsilon)
-%KL_ESTIMATOR Summary of this function goes here
-%   Detailed explanation goes here
+%KL_ESTIMATOR Calculate shrinkage covariance matrix using KL method
 [vecs, vals] = eig(sigma_hat);
 vals = diag(vals);
 p = length(vals);

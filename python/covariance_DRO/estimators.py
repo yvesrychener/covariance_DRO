@@ -51,6 +51,53 @@ def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     Sigma_star = v@np.diag(w_new)@v.transpose()
     return Sigma_star
 
+def wasserstein(sigma_hat, epsilon, tol=1e-5, maxit= 1e5):
+    '''
+    Calculate Sigma_star using Wasserstein method
+    
+    Parameters
+    ----------
+    sigma_hat : numpy.ndarray
+        the sample covariance matrix
+    epsilon : float
+        the radius of the uncertainty ball 
+        'KLdirect', ...
+    tol : float, optional
+        stopping criterion for optimization
+    maxit : float or int, optional
+        maximum number of iterations for optimization
+        
+    Returns
+    -------
+    sigma_star : numpy ndarray
+        the estimated covariance matrix
+    '''
+    # eigenvalue decomposition
+    w, v = np.linalg.eig(sigma_hat)
+    # definition of functions and bissection
+    # definition of sigma
+    omega = lambda gamma: np.cbrt((gamma/4)*(np.sqrt(w)+np.sqrt(w+2*gamma/27)))
+    sigma = lambda gamma: (omega(gamma)-gamma/(6*omega(gamma)))**2
+    
+    # definition of f_prime
+    f_prime = lambda gamma: epsilon**2-((np.sqrt(w)-np.sqrt(sigma(gamma)))**2).sum()
+    
+    # find the bisection interval
+    left = 0
+    right = 1
+    for i in range(int(maxit)):
+        if f_prime(right)>0:
+            break
+        right = right*2
+    interval = [left, right]
+    
+    # find optima gamma
+    gamma_star = optimizers.bisection(f_prime, interval, tol=tol, maxit=maxit)
+    # calculate the estimated covariance matrix
+    w_new = sigma(gamma_star)
+    Sigma_star = v@np.diag(w_new)@v.transpose()
+    return Sigma_star
+    
 
 def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
     '''
@@ -87,7 +134,8 @@ def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
     
     # lookup table for functions
     function_dict = {
-        'KLdirect': kl_direct
+        'KLdirect': kl_direct,
+        'Wasserstein' : wasserstein
     }
     
     # sanity check for inputs
