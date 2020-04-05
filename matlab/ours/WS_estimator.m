@@ -7,13 +7,16 @@ vals = diag(vals);
 obj = @(dualvar) epsilon^2 - sum((sqrt(vals)-sqrt(WS_sigmas(vals,dualvar))).^2);
 % find bisection interval
 left = 0;
-right = 1;
-for i=1:1e5
-    if obj(right)>0
-        break;
-    end
-    right = right*2;
-end
+%right = 1;
+%for i=1:1e5
+%    if obj(right)>0
+%        break;
+%    end
+%    right = right*2;
+%end
+p = length(vals);
+sigma_p = max(vals);
+right = (2*(sqrt(p*sigma_p)-epsilon)^3)/(epsilon*p);
 interval = [left, right];
 dualvar_opt = bissection(obj, interval, 1e-5, 1e5);
 vals_opt = WS_sigmas(vals, dualvar_opt);

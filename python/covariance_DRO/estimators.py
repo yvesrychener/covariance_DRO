@@ -84,11 +84,14 @@ def wasserstein(sigma_hat, epsilon, tol=1e-5, maxit= 1e5):
     
     # find the bisection interval
     left = 0
-    right = 1
-    for i in range(int(maxit)):
-        if f_prime(right)>0:
-            break
-        right = right*2
+    #right = 1
+    #for i in range(int(maxit)):
+    #    if f_prime(right)>0:
+    #        break
+    #    right = right*2
+    p = len(w)
+    sigma_p = max(w)
+    right = 2*(np.sqrt(p*sigma_p)-epsilon)**3/(p*epsilon)
     interval = [left, right]
     
     # find optima gamma
