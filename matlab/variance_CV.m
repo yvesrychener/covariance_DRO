@@ -19,8 +19,8 @@ for i = 1:length(epsilons)
         means(i) = means(i) + mean(returns);
     end
 end
-[argvalue, argmin] = min(means);
-epsilon = epsilons(argmin);
+[argvalue, argmax] = max(means);
+epsilon = epsilons(argmax);
 COV = estim(cov(X), epsilon);
 end
 
