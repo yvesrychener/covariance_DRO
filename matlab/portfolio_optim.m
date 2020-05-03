@@ -20,9 +20,9 @@ cov_sample = cov(train);
 [cov_LW, cov_RBLW, cov_OAS] = benchmark_matrices(train);
 %TODO ADD OURS WITH CV
 f = @(c,e) WS_estimator(c,e);
-cov_WS = gaussian_likelyhood_CV(f, train, logspace(-2, 2));
+cov_WS = variance_CV(f, train, logspace(-3,2, 100), 10);
 f = @(c,e) KL_estimator(c,e);
-cov_KL = gaussian_likelyhood_CV(f, train, logspace(-2, 2));
+cov_KL = variance_CV(f, train, logspace(-3,2, 100), 10);
 
 %% compute the portfolio weights
 dim = size(cov_sample,1);
