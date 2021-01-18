@@ -146,7 +146,7 @@ def fisher_rao(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     w, v = np.linalg.eig(sigma_hat)
     # definition of functions and bissection
     # definition of sigma
-    sigma = lambda gamma: w * np.exp(-1 / 2 * lambertw((2 * w ** 2) / (gamma)) ** 2)
+    sigma = lambda gamma: w * np.exp(-1 / 2 * lambertw((2 * w ** 2) / (gamma)))
 
     # definition of f_prime
     f_prime = (

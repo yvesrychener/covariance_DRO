@@ -55,7 +55,7 @@ sigma_star = WS_estimator(sigma, epsilon)
 %pause;
 
 % path of condition number
-epsilons = linspace(0,5,1000);
+epsilons = linspace(0,sqrt(trace(sigma)),1000);
 epsilons = epsilons(2:end);
 res = zeros(size(epsilons));
 for ind=1:size(res,2)
@@ -85,3 +85,47 @@ xlabel('Epsilon');
 ylabel('Eigenvalues');
 
 %pause;
+
+%% Fisher-Rao
+display('Fisher-Rao')
+
+% preparation
+sigma = [10 0 0; 0 2 0; 0 0 3]
+epsilon = 0.2;
+
+% test correct functionality
+sigma_star = FR_estimator(sigma, epsilon)
+%pause;
+
+% path of condition number
+epsilons = linspace(0,5,1000);
+epsilons = epsilons(2:end);
+res = zeros(size(epsilons));
+for ind=1:size(res,2)
+    sigma_star = FR_estimator(sigma, epsilons(ind));
+    res(ind) = cond(sigma_star);
+end
+figure;
+plot(epsilons,res)
+title('Condition Number Path (Fisher-Rao)');
+xlabel('Epsilon');
+ylabel('Condition Number');
+%pause;
+
+% path of eigenvalues
+epsilons = linspace(0,5,1000);
+epsilons = epsilons(2:end);
+eigs = zeros(size(sigma,1),size(epsilons,2));
+for ind=1:size(res,2)
+    sigma_star = WS_estimator(sigma, epsilons(ind));
+    [~,D] = eig(sigma_star);
+    eigs(:,ind) = diag(D);
+end
+figure;
+plot(epsilons,eigs)
+title('Eigenvalue Path (Fisher-Rao)');
+xlabel('Epsilon');
+ylabel('Eigenvalues');
+
+%pause;
+
