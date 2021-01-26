@@ -84,9 +84,9 @@ def wasserstein(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     sigma_star : numpy ndarray
         the estimated covariance matrix
     """
-    if epsilon>np.trace(sigma_hat):
+    if epsilon>np.sqrt(np.trace(sigma_hat)):
         warn('Epsilon bigger than max value')
-        epsilon = np.trace(sigma_hat)
+        epsilon = np.sqrt(np.trace(sigma_hat))
     # eigenvalue decomposition
     w, v = np.linalg.eig(sigma_hat)
     # definition of functions and bissection
