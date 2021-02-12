@@ -5,8 +5,9 @@ vals = diag(vals);
 p = length(vals);
 sigma_max = max(vals);
 interval = [0, 2*sigma_max^2*exp(-4*epsilon/p)/(1-exp(-2*epsilon/p))];
+X = @(dualvar) 2./(1+sqrt(1+8.*vals.^2./dualvar));
 
-obj = @(dualvar) 2*epsilon + p + sum(log(KL_sigmas(vals, dualvar)./vals)-KL_sigmas(vals, dualvar)./vals);
+obj = @(dualvar) 2*epsilon + p + sum(log(X(dualvar))-X(dualvar));
 
 dualvar_opt = bissection(obj, interval, 1e-10, 1e5);
 vals_opt = KL_sigmas(vals, dualvar_opt);

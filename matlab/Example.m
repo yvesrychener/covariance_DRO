@@ -1,5 +1,7 @@
 %% organization
 clc; clear; close all;
+addpath('method');
+
 
 %% KL
 display('KL')
