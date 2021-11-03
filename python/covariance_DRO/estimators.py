@@ -7,8 +7,7 @@ from scipy.special import lambertw
 from warnings import warn
 from . import optimizers
 
-
-def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
+def kl(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     """
     Calculate Sigma_star using Kullback Leibler direct method
     
@@ -35,11 +34,11 @@ def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     p = w.size
     # definition of functions and bissection
     # definition of sigma_star(gamma)
-    sigma = lambda gamma: (np.sqrt((gamma ** 2) / (w ** 2) + 8 * gamma) - gamma / w) / 4
-    X = lambda gamma: 2/(1+np.sqrt(1+8*w**2/gamma))
+    sigma = lambda gamma: (np.sqrt((gamma ** 2) + 16 * gamma*w**2) - gamma) / (8*w)
+    X = lambda gamma: 2/(1+np.sqrt(1+16*w**2/gamma))
     # definition of f_prime(gamma)
     f_prime = (
-        lambda gamma: (2 * epsilon + p)
+        lambda gamma: (2*epsilon + p)
         + (np.log(X(gamma)) - X(gamma)).sum()
     )
     # (2*epsilon-np.log(w).sum())+\
@@ -48,7 +47,7 @@ def kl_direct(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
     p = sigma_hat.shape[0]
     interval = [
         0,
-        (2 * w.max() ** 2 * np.exp(-4 * epsilon / p)) / (1 - np.exp(-2 * epsilon / p)),
+        (4 * w.max() ** 2 * np.exp(-4 * epsilon / p)) / (1 - np.exp(-2*epsilon / p)),
     ]
 
     # find the optimal gamma
@@ -86,6 +85,8 @@ def wasserstein(sigma_hat, epsilon, tol=1e-5, maxit=1e5):
         epsilon = np.sqrt(np.trace(sigma_hat))
     # eigenvalue decomposition
     w, v = np.linalg.eig(sigma_hat)
+    w = np.real(w)
+    v = np.real(v)
     # definition of functions and bissection
     # definition of sigma
     omega = lambda gamma: np.cbrt(
@@ -179,7 +180,7 @@ def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
         the radius of the uncertainty ball 
     method : string
         the method to use. must be one of the following:
-        'KLdirect', ...
+        'KLdirect' (equivalent to 'KL'), 'Wasserstein', 'Fisher-Rao'
     tol : float, optional
         stopping criterion for optimization
     maxit : float or int, optional
@@ -202,7 +203,8 @@ def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
 
     # lookup table for functions
     function_dict = {
-        "KLdirect": kl_direct,
+        "KLdirect": kl,
+        "KL": kl,
         "Wasserstein": wasserstein,
         "Fisher-Rao": fisher_rao,
     }
