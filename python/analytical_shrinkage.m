@@ -1,4 +1,5 @@
 function [sigmatilde]=analytical_shrinkage(sample, n, p)
+% Code from https://www.econ.uzh.ch/apps/workingpapers/wp/econwp264.pdf
 [u,lambda]=eig(sample,'vector');
 [lambda,isort]=sort(lambda);
 u=u(:,isort);
