@@ -209,13 +209,5 @@ def estimate_cov(sigma_hat, epsilon, method, tol=1e-5, maxit=1e5):
         "Fisher-Rao": fisher_rao,
     }
 
-    # sanity check for inputs
-    #if not epsilon > 0:
-    #    raise ValueError("ball radius must be >0")
-    #if not np.all(np.linalg.eigvals(sigma_hat) >= 0):
-    #    raise ValueError("non-positive-semidefinite covariance matrix")
-    #if not method in list(function_dict.keys()):
-    #    raise ValueError("invalid method")
-
     # perform the estimation and return the result
     return function_dict[method](sigma_hat, epsilon, tol, maxit)
